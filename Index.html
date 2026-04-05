@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teleprompter Profesional - Poderes para Aprender</title>
+    <style>
+        :root {
+            --bg-color: #111;
+            --text-author: #00ff00; /* Verde para el Autor */
+            --text-journalist: #00d4ff; /* Azul para el Periodista */
+            --highlight: #ffff00;
+            --font-size: 3.5rem;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* Header con Relojes */
+        #header-dashboard {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #222;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-bottom: 2px solid #444;
+            z-index: 100;
+            font-family: monospace;
+            font-size: 1.5rem;
+        }
+
+        .timer-box { text-align: center; }
+        .timer-label { font-size: 0.8rem; color: #aaa; text-transform: uppercase; }
+
+        /* Contenedor del Teleprompter */
+        #prompter-container {
+            margin-top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: scroll;
+            padding: 0 10%;
+            scroll-behavior: smooth;
+        }
+
+        #prompter-content {
+            padding-bottom: 100vh;
+            line-height: 1.6;
+        }
+
+        .phase-marker {
+            color: var(--highlight);
+            border-bottom: 1px solid var(--highlight);
+            margin: 100px 0 50px 0;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .role-author { color: var(--text-author); font-weight: bold; margin-bottom: 20px; }
+        .role-journalist { color: var(--text-journalist); font-weight: bold; margin-bottom: 20px; }
+        
+        .script-text { font-size: var(--font-size); margin-bottom: 60px; }
+
+        /* Controles */
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            cursor: pointer;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover { background: #666; }
+
+        /* Línea de lectura */
+        #reading-line {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 0, 0, 0.3);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-dashboard">
+        <div class="timer-box">
+            <div class="timer-label">Tiempo Total (20:00)</div>
+            <div id="total-clock">00:00</div>
+        </div>
+        <div class="timer-box">
+            <div class="timer-label">Fase Actual</div>
+            <div id="phase-clock">00:00</div>
+        </div>
+        <div class="timer-box">
+            <div class="timer-label">Velocidad</div>
+            <div id="speed-indicator">1x</div>
+        </div>
+    </div>
+
+    <div id="reading-line"></div>
+
+    <div id="prompter-container">
+        <div id="prompter-content">
+            
+            <div class="phase-marker">FASE 1: EL GANCHO ARISTOTÉLICO (3 MIN)</div>
+            
+            <div class="role-journalist">PERIODISTA:</div>
+            <div class="script-text">
+                Estamos aquí con el autor de una obra que promete revolucionar las aulas. Pero antes de entrar en materia, dígame... ¿por qué hoy, con más tecnología que nunca, parece que enseñar es más difícil que hace 40 años?
+            </div>
+
+            <div class="role-author">AUTOR (Respuesta):</div>
+            <div class="script-text">
+                [span_6](start_span)Esa es la pregunta que dejo en el aire para todos: ¿Por qué hace décadas teníamos aulas de 40 alumnos que funcionaban y hoy con 25 nos sentimos desbordados?[span_6](end_span) [span_7](start_span)¿Es que enseñábamos mejor antes o es que hemos perdido la brújula de la eficiencia?[span_7](end_span) Mi libro "Poderes para Aprender" nace para responder a ese vacío.
+            </div>
+
+            <div class="phase-marker">FASE 2: RESUMEN Y LOS 20 PODERES (5 MIN)</div>
+
+            <div class="role-journalist">PERIODISTA:</div>
+            <div class="script-text">
+                Usted habla de "20 Poderes" y del concepto P.I.C. Explíquenos brevemente qué es esta metodología y cómo puede ayudar a un profesor estresado.
+            </div>
+
+            <div class="role-author">AUTOR (Respuesta):</div>
+            <div class="script-text">
+                [span_8](start_span)El P.I.C. es el Proceso de Impartición de Clases.[span_8](end_span) [span_9](start_span)No es solo teoría; es un manual de intenciones para pasar de ser eficaces a ser eficientes.[span_9](end_span) [span_10](start_span)Hablo de 20 poderes como la Vehemencia, el Efecto Concierto o el Efecto Periodista.[span_10](end_span) [span_11](start_span)Son herramientas para conseguir más aprendizaje en menos tiempo, optimizando cada minuto en el aula.[span_11](end_span)
+            </div>
+
+            <div class="phase-marker">FASE 3: DETALLE Y TETRALOGÍA (7 MIN)</div>
+
+            <div class="role-journalist">PERIODISTA:</div>
+            <div class="script-text">
+                Mencionó el "Efecto Concierto". Suena fascinante. Y también he oído que este es solo el inicio de una serie de libros, una tetralogía. ¿Qué nos puede adelantar?
+            </div>
+
+            <div class="role-author">AUTOR (Respuesta):</div>
+            <div class="script-text">
+                [span_12](start_span)El "Efecto Concierto" es vital: el alumno debe venir con la "letra aprendida" para disfrutar de la clase.[span_12](end_span) [span_13](start_span)Si conocen el tema de antemano, la clase fluye.[span_13](end_span) [span_14](start_span)En cuanto al futuro, este es el primer volumen de una tetralogía enfocada en la eficiencia total del sistema.[span_14](end_span) [span_15](start_span)Queremos demostrar que se puede impartir el currículo en 4 días si somos verdaderamente eficientes.[span_15](end_span)
+            </div>
+
+            <div class="phase-marker">FASE 4: REFLEXIÓN Y LLAMADA A LA ACCIÓN (5 MIN)</div>
+
+            <div class="role-journalist">PERIODISTA:</div>
+            <div class="script-text">
+                Para terminar, ¿cuál es su mensaje final para la sociedad? ¿Qué espera que cambie después de que alguien lea este libro?
+            </div>
+
+            <div class="role-author">AUTOR (Respuesta):</div>
+            <div class="script-text">
+                [span_16](start_span)Hago un llamado a la sociedad y a las familias.[span_16](end_span) [span_17](start_span)Necesitamos que los alumnos vengan motivados y entiendan que la educación es un PREMIO, no un castigo.[span_17](end_span) [span_18](start_span)Si logramos que no vengan a "molestar" sino a aplicar estos poderes, liberaremos recursos públicos preciosos.[span_18](end_span) [span_19](start_span)Esos recursos que ahorramos en eficiencia educativa podrán ir a cuidar a nuestros mayores y mejorar la sanidad.[span_19](end_span) [span_20](start_span)¡Hagamos el sistema eficiente juntos[span_20](end_span)!
+            </div>
+
+        </div>
+    </div>
+
+    <div id="controls">
+        <button onclick="toggleScroll()">Play/Pausa</button>
+        <button onclick="changeSpeed(1)">Más Rápido</button>
+        <button onclick="changeSpeed(-1)">Más Lento</button>
+        <button onclick="resetTimers()">Reiniciar</button>
+    </div>
+
+    <script>
+        let scrollInterval;
+        let isScrolling = false;
+        let speed = 1;
+        let startTime;
+        let totalSeconds = 0;
+
+        const container = document.getElementById('prompter-container');
+        const totalClock = document.getElementById('total-clock');
+
+        function toggleScroll() {
+            if (isScrolling) {
+                clearInterval(scrollInterval);
+            } else {
+                if(!startTime) startTime = Date.now();
+                scrollInterval = setInterval(() => {
+                    container.scrollTop += speed;
+                    updateClocks();
+                }, 30);
+            }
+            isScrolling = !isScrolling;
+        }
+
+        function updateClocks() {
+            totalSeconds++;
+            let elapsed = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            let s = (elapsed % 60).toString().padStart(2, '0');
+            totalClock.innerText = `${m}:${s}`;
+        }
+
+        function changeSpeed(delta) {
+            speed = Math.max(1, speed + delta);
+            document.getElementById('speed-indicator').innerText = speed + 'x';
+        }
+
+        function resetTimers() {
+            location.reload();
+        }
+
+        // Control por teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') toggleScroll();
+            if (e.code === 'ArrowUp') changeSpeed(1);
+            if (e.code === 'ArrowDown') changeSpeed(-1);
+        });
+    </script>
+</body>
+</html>
