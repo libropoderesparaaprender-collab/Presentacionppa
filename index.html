@@ -2,123 +2,173 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TELEPROMPTER PROFESIONAL - PODERES PARA APRENDER</title>
+    <title>TELEPROMPTER: PODERES PARA APRENDER (FINAL)</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #444;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            /* Quitamos el overflow hidden para asegurar que siempre ruede */
-        }
-
+        body { background: #050505; color: #555; font-family: 'Arial', sans-serif; margin: 0; padding: 0; }
+        
         #header {
             position: fixed; top: 0; width: 100%; height: 70px;
             background: #111; display: flex; justify-content: space-around;
             align-items: center; z-index: 1000; border-bottom: 2px solid #333;
         }
-
-        .stat-val { color: #FFF; font-size: 1.5rem; font-family: monospace; }
+        .stat-val { color: #FFF; font-size: 1.6rem; font-family: monospace; font-weight: bold; }
         .stat-lbl { color: #888; font-size: 0.7rem; text-transform: uppercase; }
 
-        #content {
-            padding: 150px 10% 800px 10%; /* Mucho espacio al final para poder terminar de leer */
+        #reading-line {
+            position: fixed; top: 45%; left: 0; width: 100%; height: 3px;
+            background: rgba(0, 255, 65, 0.4); z-index: 500; pointer-events: none;
         }
 
-        .block { margin-bottom: 120px; transition: 0.4s; }
-        .role { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: block; border-bottom: 1px solid #333; }
-        .txt { font-size: 3.8rem; font-weight: bold; line-height: 1.3; }
-
-        /* Colores por rol */
-        .journalist { color: #00D4FF; }
-        .author { color: #00FF41; }
-        
-        /* Bloque Activo (Karaoke) */
+        #content { padding: 180px 10% 800px 10%; }
+        .block { margin-bottom: 150px; transition: 0.4s; }
         .active { color: white !important; opacity: 1 !important; }
+        
+        .role { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; display: block; text-transform: uppercase; letter-spacing: 2px; }
+        .txt { font-size: 3.4rem; font-weight: bold; line-height: 1.3; }
+
+        .journalist { color: #00D4FF; border-left: 10px solid #00D4FF; padding-left: 25px; }
+        .author { color: #00FF41; border-left: 10px solid #00FF41; padding-left: 25px; }
 
         #controls {
-            position: fixed; bottom: 0; width: 100%; height: 70px;
-            background: #222; display: flex; z-index: 2000; border-top: 2px solid #444;
+            position: fixed; bottom: 0; width: 100%; height: 80px;
+            background: #1a1a1a; display: flex; z-index: 2000;
         }
-
-        button {
-            flex: 1; border: none; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer;
-        }
+        button { flex: 1; border: none; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-right: 1px solid #333; }
         #btn-play { background: #28a745; }
         #btn-pause { background: #dc3545; }
         .btn-speed { background: #333; }
-
-        #reading-line {
-            position: fixed; top: 50%; left: 0; width: 100%; height: 2px;
-            background: red; opacity: 0.3; z-index: 500; pointer-events: none;
-        }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div><span class="stat-lbl">Reloj Total</span><span id="timer" class="stat-val">20:00</span></div>
+    <div><span class="stat-lbl">Tiempo Restante</span><span id="timer" class="stat-val">10:00</span></div>
     <div><span class="stat-lbl">Velocidad</span><span id="speed-val" class="stat-val">2</span></div>
 </div>
 
 <div id="reading-line"></div>
 
 <div id="content">
-    <div class="block journalist" id="b1">
-        <span class="role">PERIODISTA (Fase 1 - 3 min)</span>
-        <div class="txt">¿Por qué empezar con una pregunta que cuestiona todo el sistema actual?</div>
+    
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 1</span>
+        <div class="txt">Gregorio, presenta "Poderes para Aprender", volumen 1 de una tetralogía. ¿Cuál es el objetivo y por qué cuatro partes?</div>
     </div>
 
-    <div class="block author" id="b2">
-        <span class="role">AUTOR</span>
-        <div class="txt">Seneca decía: "La suerte es la unión de preparación y oportunidad". Estos poderes son tu preparación. ¿Cómo es posible que con más tecnología seamos menos eficientes?</div>
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">El objetivo es buscar la EFICIENCIA en el aprendizaje para estar más preparados para cuando tengamos la OPORTUNIDAD de demostrarlo. He diseñado una tetralogía porque la eficiencia educativa es un sistema completo: este libro es la "Gimnasia" inicial.</div>
     </div>
 
-    <div class="block journalist" id="b3">
-        <span class="role">PERIODISTA (Fase 2 - 5 min)</span>
-        <div class="txt">Háblenos del P.I.C. y de la eficiencia productiva en el aula.</div>
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 2</span>
+        <div class="txt">Usted es ingeniero y docente. ¿Cómo influye su visión técnica en esta "Gimnasia para el Cerebro"?</div>
     </div>
 
-    <div class="block author" id="b4">
-        <span class="role">AUTOR</span>
-        <div class="txt">El Proceso de Impartición de Clase (P.I.C.) busca ganar tiempo. Con el "Efecto Saludo", validamos al alumno para que el aprendizaje fluya.</div>
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Como ingeniero, busco optimizar recursos. En el aula, el recurso más escaso es el TIEMPO. Aplico lógica de eficiencia industrial: máximo rendimiento con el mínimo desgaste mental innecesario.</div>
     </div>
 
-    <div class="block journalist" id="b5">
-        <span class="role">PERIODISTA (Fase 3 - 7 min)</span>
-        <div class="txt">Esta es la primera parte de una tetralogía. ¿Qué sigue?</div>
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 3</span>
+        <div class="txt">Diferencia entre "Eficacia" y "Eficiencia" para un estudiante.</div>
     </div>
 
-    <div class="block author" id="b6">
-        <span class="role">AUTOR</span>
-        <div class="txt">Buscamos el "Efecto Concierto": que el alumno venga preparado para que la clase sea una sinfonía de alto rendimiento. ¡Eficiencia total!</div>
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Eficacia es simplemente aprobar. EFICIENCIA es tener una estructura mental para retener y aplicar con claridad. No queremos alumnos que pierdan horas, sino que produzcan calidad en el tiempo justo.</div>
     </div>
 
-    <div class="block author" id="b7">
-        <span class="role">REFLEXIÓN FINAL (Fase 4 - 5 min)</span>
-        <div class="txt">Si el alumno no molesta y está motivado, ahorramos recursos para nuestra SANIDAD y para cuidar a nuestros MAYORES.</div>
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 4</span>
+        <div class="txt">Presenta 6 poderes ahora. ¿Son los cimientos para los 14 restantes?</div>
     </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Exacto. Estos 6 poderes son la base de la inteligencia ágil. Sin esta "gimnasia" inicial, es imposible aplicar la gestión avanzada que vendrá después. Es el entrenamiento para el éxito.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 5</span>
+        <div class="txt">¿Cuál es el poder más urgente de aplicar hoy?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">El EFECTO SALUDO. Neurológicamente es la llave. Si validas el bienestar del alumno al empezar, rompes la resistencia y el cerebro se abre a absorber información.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 6</span>
+        <div class="txt">¿Cómo ayuda el "Efecto Concierto" a la motivación?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Nadie disfruta un concierto sin conocer las canciones. Con preparación previa, la clase es disfrute, no una tediosa toma de apuntes.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 7</span>
+        <div class="txt">¿Por qué dice que estos poderes hacen que los alumnos "no molesten"?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Un alumno que molesta suele estar frustrado por la ineficiencia. Si siente que su cerebro es productivo, cambia la interrupción por la participación activa.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 8</span>
+        <div class="txt">¿Cómo puede este libro hacernos "tener más suerte"?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Séneca decía: "La suerte es lo que sucede cuando la PREPARACIÓN encuentra la OPORTUNIDAD". Estos 6 poderes son tu preparación. Si estás entrenado, fabricas tu propia suerte.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 9</span>
+        <div class="txt">¿Entonces el objetivo es estar listos para el éxito futuro?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Exacto. Buscamos EFICIENCIA para estar más preparados para cuando llegue la oportunidad de demostrarlo. Que el momento no te pille oxidado, sino en tu mejor forma mental.</div>
+    </div>
+
+    <div class="block journalist">
+        <span class="role">Periodista - Pregunta 10</span>
+        <div class="txt">¿Cómo nos beneficia a todos este pacto social de eficiencia?</div>
+    </div>
+
+    <div class="block author">
+        <span class="role">Autor - Respuesta</span>
+        <div class="txt">Si el sistema es eficiente y los alumnos producen, ahorramos recursos inmensos. Ese dinero es el que permitirá mejorar la SANIDAD y cuidar mejor a nuestros MAYORES. Es un beneficio para toda la sociedad.</div>
+    </div>
+
 </div>
 
 <div id="controls">
-    <button class="btn-speed" onclick="changeSpeed(-1)">MÁS LENTO</button>
-    <button id="btn-play" onclick="scrolling = true">DALE AL PLAY</button>
+    <button class="btn-speed" onclick="changeSpeed(-1)">LENTO</button>
+    <button id="btn-play" onclick="scrolling = true">PLAY (Espacio)</button>
     <button id="btn-pause" onclick="scrolling = false">PAUSA</button>
-    <button class="btn-speed" onclick="changeSpeed(1)">MÁS RÁPIDO</button>
+    <button class="btn-speed" onclick="changeSpeed(1)">RÁPIDO</button>
 </div>
 
 <script>
     let scrolling = false;
     let speed = 2;
-    let timeLeft = 1200;
+    let timeLeft = 600;
 
     function changeSpeed(delta) {
         speed = Math.max(1, speed + delta);
         document.getElementById('speed-val').innerText = speed;
     }
 
-    // El motor de scroll ahora usa WINDOW directamente (Infalible)
     function loop() {
         if(scrolling) {
             window.scrollBy(0, speed);
@@ -129,7 +179,7 @@
 
     function updateHighlight() {
         const blocks = document.querySelectorAll('.block');
-        const center = window.innerHeight / 2;
+        const center = window.innerHeight * 0.45;
         blocks.forEach(b => {
             const rect = b.getBoundingClientRect();
             if(rect.top < center && rect.bottom > center) {
@@ -140,7 +190,6 @@
         });
     }
 
-    // Timer
     setInterval(() => {
         if(scrolling && timeLeft > 0) {
             timeLeft--;
@@ -150,15 +199,12 @@
         }
     }, 1000);
 
-    // Iniciar loop
     loop();
 
-    // Espacio para Play/Pausa
     window.addEventListener('keydown', (e) => {
-        if(e.code === 'Space') { 
-            scrolling = !scrolling; 
-            e.preventDefault(); 
-        }
+        if(e.code === 'Space') { scrolling = !scrolling; e.preventDefault(); }
+        if(e.code === 'ArrowUp') changeSpeed(1);
+        if(e.code === 'ArrowDown') changeSpeed(-1);
     });
 </script>
 
