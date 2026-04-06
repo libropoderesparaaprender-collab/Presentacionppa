@@ -2,174 +2,163 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TELEPROMPTER FINAL - PODERES PARA APRENDER</title>
+    <title>TELEPROMPTER PROFESIONAL - PODERES PARA APRENDER</title>
     <style>
-        :root {
-            --bg: #050505;
-            --author: #00FF41; 
-            --journalist: #00D4FF;
-            --font-size: 3.2rem;
-        }
-
-        body, html {
-            background-color: var(--bg);
+        body {
+            background-color: #050505;
             color: #444;
             font-family: Arial, sans-serif;
-            margin: 0; padding: 0;
-            height: 100%; overflow: hidden;
+            margin: 0;
+            padding: 0;
+            /* Quitamos el overflow hidden para asegurar que siempre ruede */
         }
 
         #header {
-            position: fixed; top: 0; width: 100%; height: 80px;
+            position: fixed; top: 0; width: 100%; height: 70px;
             background: #111; display: flex; justify-content: space-around;
             align-items: center; z-index: 1000; border-bottom: 2px solid #333;
         }
 
-        .stat { text-align: center; font-family: monospace; }
-        .stat-val { color: #FFF; font-size: 1.5rem; display: block; }
+        .stat-val { color: #FFF; font-size: 1.5rem; font-family: monospace; }
         .stat-lbl { color: #888; font-size: 0.7rem; text-transform: uppercase; }
 
-        #container {
-            height: 100vh; overflow-y: scroll; /* Scroll habilitado por si falla el auto */
-            padding: 120px 10% 500px 10%;
-            scroll-behavior: smooth;
+        #content {
+            padding: 150px 10% 800px 10%; /* Mucho espacio al final para poder terminar de leer */
         }
 
-        .block { margin-bottom: 100px; transition: 0.3s; opacity: 0.2; }
-        .block.active { opacity: 1; transform: scale(1.02); }
+        .block { margin-bottom: 120px; transition: 0.4s; }
+        .role { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: block; border-bottom: 1px solid #333; }
+        .txt { font-size: 3.8rem; font-weight: bold; line-height: 1.3; }
 
-        .role { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: block; }
-        .txt { font-size: var(--font-size); font-weight: bold; line-height: 1.3; }
+        /* Colores por rol */
+        .journalist { color: #00D4FF; }
+        .author { color: #00FF41; }
+        
+        /* Bloque Activo (Karaoke) */
+        .active { color: white !important; opacity: 1 !important; }
 
-        .author { color: var(--author); }
-        .journalist { color: var(--journalist); }
-
-        /* BOTONES DE CONTROL GIGANTES */
         #controls {
-            position: fixed; bottom: 0; width: 100%; height: 80px;
-            background: #222; display: flex; z-index: 2000;
+            position: fixed; bottom: 0; width: 100%; height: 70px;
+            background: #222; display: flex; z-index: 2000; border-top: 2px solid #444;
         }
 
-        .btn {
-            flex: 1; border: 1px solid #444; color: white;
-            font-weight: bold; font-size: 1.2rem; cursor: pointer;
-            background: #222;
+        button {
+            flex: 1; border: none; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer;
         }
+        #btn-play { background: #28a745; }
+        #btn-pause { background: #dc3545; }
+        .btn-speed { background: #333; }
 
-        #btn-play { background: #1a5c2e; }
-        #btn-pause { background: #5c1a1a; }
+        #reading-line {
+            position: fixed; top: 50%; left: 0; width: 100%; height: 2px;
+            background: red; opacity: 0.3; z-index: 500; pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div class="stat"><span class="stat-lbl">Tiempo Restante</span><span id="timer" class="stat-val">20:00</span></div>
-    <div class="stat"><span class="stat-lbl">Velocidad</span><span id="speed-val" class="stat-val">2</span></div>
+    <div><span class="stat-lbl">Reloj Total</span><span id="timer" class="stat-val">20:00</span></div>
+    <div><span class="stat-lbl">Velocidad</span><span id="speed-val" class="stat-val">2</span></div>
 </div>
 
-<div id="container">
-    <div class="block journalist active">
-        <span class="role">PERIODISTA (3 MIN)</span>
-        <div class="txt">Bienvenido. ¿Por qué empezar con una pregunta que cuestiona todo el sistema actual?</div>
+<div id="reading-line"></div>
+
+<div id="content">
+    <div class="block journalist" id="b1">
+        <span class="role">PERIODISTA (Fase 1 - 3 min)</span>
+        <div class="txt">¿Por qué empezar con una pregunta que cuestiona todo el sistema actual?</div>
     </div>
 
-    <div class="block author">
+    <div class="block author" id="b2">
         <span class="role">AUTOR</span>
-        <div class="txt">¿Cómo es posible que con más tecnología seamos menos eficientes? Seneca decía: "La suerte es la unión de preparación y oportunidad". Estos poderes son tu preparación.</div>
+        <div class="txt">Seneca decía: "La suerte es la unión de preparación y oportunidad". Estos poderes son tu preparación. ¿Cómo es posible que con más tecnología seamos menos eficientes?</div>
     </div>
 
-    <div class="block journalist">
-        <span class="role">PERIODISTA (5 MIN)</span>
+    <div class="block journalist" id="b3">
+        <span class="role">PERIODISTA (Fase 2 - 5 min)</span>
         <div class="txt">Háblenos del P.I.C. y de la eficiencia productiva en el aula.</div>
     </div>
 
-    <div class="block author">
+    <div class="block author" id="b4">
         <span class="role">AUTOR</span>
-        <div class="txt">El Proceso de Impartición de Clase (P.I.C.) busca ganar tiempo. Con poderes como el "Efecto Saludo", validamos al alumno para que el aprendizaje fluya sin fricción.</div>
+        <div class="txt">El Proceso de Impartición de Clase (P.I.C.) busca ganar tiempo. Con el "Efecto Saludo", validamos al alumno para que el aprendizaje fluya.</div>
     </div>
 
-    <div class="block journalist">
-        <span class="role">PERIODISTA (7 MIN)</span>
-        <div class="txt">Este es el volumen 1 de la tetralogía. ¿Qué sigue?</div>
+    <div class="block journalist" id="b5">
+        <span class="role">PERIODISTA (Fase 3 - 7 min)</span>
+        <div class="txt">Esta es la primera parte de una tetralogía. ¿Qué sigue?</div>
     </div>
 
-    <div class="block author">
+    <div class="block author" id="b6">
         <span class="role">AUTOR</span>
-        <div class="txt">Es una hoja de ruta total. Buscamos el "Efecto Concierto": que el alumno venga preparado para que la clase sea una sinfonía de alto rendimiento.</div>
+        <div class="txt">Buscamos el "Efecto Concierto": que el alumno venga preparado para que la clase sea una sinfonía de alto rendimiento. ¡Eficiencia total!</div>
     </div>
 
-    <div class="block author">
-        <span class="role">REFLEXIÓN FINAL (5 MIN)</span>
-        <div class="txt">Si el alumno no molesta y está motivado, ahorramos recursos. Ese ahorro es dinero para nuestra SANIDAD y para cuidar a nuestros MAYORES. ¡Es un pacto social!</div>
+    <div class="block author" id="b7">
+        <span class="role">REFLEXIÓN FINAL (Fase 4 - 5 min)</span>
+        <div class="txt">Si el alumno no molesta y está motivado, ahorramos recursos para nuestra SANIDAD y para cuidar a nuestros MAYORES.</div>
     </div>
 </div>
 
 <div id="controls">
-    <button class="btn" onclick="changeSpeed(-1)">MÁS LENTO</button>
-    <button id="btn-play" class="btn" onclick="startScroll()">PLAY (Espacio)</button>
-    <button id="btn-pause" class="btn" onclick="stopScroll()">PAUSA</button>
-    <button class="btn" onclick="changeSpeed(1)">MÁS RÁPIDO</button>
+    <button class="btn-speed" onclick="changeSpeed(-1)">MÁS LENTO</button>
+    <button id="btn-play" onclick="scrolling = true">DALE AL PLAY</button>
+    <button id="btn-pause" onclick="scrolling = false">PAUSA</button>
+    <button class="btn-speed" onclick="changeSpeed(1)">MÁS RÁPIDO</button>
 </div>
 
 <script>
     let scrolling = false;
     let speed = 2;
-    let time = 1200;
-    const container = document.getElementById('container');
-    const blocks = document.querySelectorAll('.block');
-
-    function startScroll() { 
-        scrolling = true; 
-        document.getElementById('btn-play').style.opacity = "0.5";
-        document.getElementById('btn-pause').style.opacity = "1";
-    }
-    
-    function stopScroll() { 
-        scrolling = false; 
-        document.getElementById('btn-play').style.opacity = "1";
-        document.getElementById('btn-pause').style.opacity = "0.5";
-    }
+    let timeLeft = 1200;
 
     function changeSpeed(delta) {
         speed = Math.max(1, speed + delta);
         document.getElementById('speed-val').innerText = speed;
     }
 
-    // Bucle de movimiento
-    setInterval(() => {
+    // El motor de scroll ahora usa WINDOW directamente (Infalible)
+    function loop() {
         if(scrolling) {
-            container.scrollTop += speed;
+            window.scrollBy(0, speed);
             updateHighlight();
         }
-    }, 30);
+        requestAnimationFrame(loop);
+    }
 
-    // Resaltar bloque según posición
     function updateHighlight() {
-        let center = window.innerHeight / 2;
+        const blocks = document.querySelectorAll('.block');
+        const center = window.innerHeight / 2;
         blocks.forEach(b => {
-            let rect = b.getBoundingClientRect();
+            const rect = b.getBoundingClientRect();
             if(rect.top < center && rect.bottom > center) {
-                blocks.forEach(x => x.classList.remove('active'));
                 b.classList.add('active');
+            } else {
+                b.classList.remove('active');
             }
         });
     }
 
     // Timer
     setInterval(() => {
-        if(scrolling && time > 0) {
-            time--;
-            let m = Math.floor(time/60).toString().padStart(2,'0');
-            let s = (time%60).toString().padStart(2,'0');
+        if(scrolling && timeLeft > 0) {
+            timeLeft--;
+            let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+            let s = (timeLeft%60).toString().padStart(2,'0');
             document.getElementById('timer').innerText = `${m}:${s}`;
         }
     }, 1000);
 
-    // Controles teclado
+    // Iniciar loop
+    loop();
+
+    // Espacio para Play/Pausa
     window.addEventListener('keydown', (e) => {
-        if(e.code === 'Space') { scrolling ? stopScroll() : startScroll(); e.preventDefault(); }
-        if(e.code === 'ArrowUp') changeSpeed(1);
-        if(e.code === 'ArrowDown') changeSpeed(-1);
+        if(e.code === 'Space') { 
+            scrolling = !scrolling; 
+            e.preventDefault(); 
+        }
     });
 </script>
 
