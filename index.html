@@ -2,207 +2,175 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TELEPROMPTER PROFESIONAL: PODERES PARA APRENDER</title>
+    <title>TELEPROMPTER FINAL - PODERES PARA APRENDER</title>
     <style>
         :root {
             --bg: #050505;
             --author: #00FF41; 
             --journalist: #00D4FF;
-            --dim: #444;
-            --font-size: 3.5rem;
-            --highlight-bg: rgba(255, 255, 255, 0.05);
+            --font-size: 3.2rem;
         }
 
         body, html {
             background-color: var(--bg);
-            color: var(--dim);
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: #444;
+            font-family: Arial, sans-serif;
             margin: 0; padding: 0;
-            overflow: hidden;
-            height: 100vh;
+            height: 100%; overflow: hidden;
         }
 
-        /* Dashboard Superior */
         #header {
-            position: fixed;
-            top: 0; width: 100%; height: 100px;
-            background: #111;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            border-bottom: 2px solid #333;
-            z-index: 1000;
-            text-align: center;
-            align-items: center;
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: #111; display: flex; justify-content: space-around;
+            align-items: center; z-index: 1000; border-bottom: 2px solid #333;
         }
 
-        .metric { border-right: 1px solid #222; }
-        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        .val { font-size: 1.8rem; color: #FFF; font-weight: bold; font-family: monospace; }
+        .stat { text-align: center; font-family: monospace; }
+        .stat-val { color: #FFF; font-size: 1.5rem; display: block; }
+        .stat-lbl { color: #888; font-size: 0.7rem; text-transform: uppercase; }
 
-        /* Contenedor de Scroll */
-        #scroller {
-            height: 100vh;
-            overflow-y: hidden;
-            padding: 150px 10% 600px 10%;
+        #container {
+            height: 100vh; overflow-y: scroll; /* Scroll habilitado por si falla el auto */
+            padding: 120px 10% 500px 10%;
+            scroll-behavior: smooth;
         }
 
-        .block {
-            padding: 40px;
-            margin-bottom: 50px;
-            border-radius: 15px;
-            transition: all 0.5s ease;
-            opacity: 0.3;
+        .block { margin-bottom: 100px; transition: 0.3s; opacity: 0.2; }
+        .block.active { opacity: 1; transform: scale(1.02); }
+
+        .role { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: block; }
+        .txt { font-size: var(--font-size); font-weight: bold; line-height: 1.3; }
+
+        .author { color: var(--author); }
+        .journalist { color: var(--journalist); }
+
+        /* BOTONES DE CONTROL GIGANTES */
+        #controls {
+            position: fixed; bottom: 0; width: 100%; height: 80px;
+            background: #222; display: flex; z-index: 2000;
         }
 
-        /* Efecto de resaltado (Karaoke) */
-        .block.active {
-            opacity: 1;
-            background: var(--highlight-bg);
-            box-shadow: 0 0 30px rgba(255,255,255,0.05);
-            transform: scale(1.02);
-            color: #EEE;
+        .btn {
+            flex: 1; border: 1px solid #444; color: white;
+            font-weight: bold; font-size: 1.2rem; cursor: pointer;
+            background: #222;
         }
 
-        .role { font-size: 1.2rem; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 2px; }
-        .txt { font-size: var(--font-size); font-weight: 700; line-height: 1.2; }
-        
-        .author .role { color: var(--author); }
-        .author .txt { color: var(--author); }
-        .journo .role { color: var(--journalist); }
-        .journo .txt { color: var(--journalist); }
-
-        .seneca {
-            font-style: italic;
-            border-left: 10px solid var(--author);
-            padding-left: 20px;
-            margin: 40px 0;
-        }
-
-        #line-marker {
-            position: fixed;
-            top: 50%; left: 0; width: 100%;
-            height: 2px; background: rgba(0, 255, 65, 0.3);
-            z-index: 500; pointer-events: none;
-        }
+        #btn-play { background: #1a5c2e; }
+        #btn-pause { background: #5c1a1a; }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div class="metric"><div class="label">Tiempo Restante</div><div id="clock" class="val">20:00</div></div>
-    <div class="metric"><div class="label">Duración Bloque</div><div id="block-timer" class="val">00:00</div></div>
-    <div class="metric"><div class="label">Velocidad</div><div id="speed-display" class="val">x2</div></div>
-    <div class="metric"><div class="label">Estado</div><div id="status" class="val" style="color:red">STOP</div></div>
+    <div class="stat"><span class="stat-lbl">Tiempo Restante</span><span id="timer" class="stat-val">20:00</span></div>
+    <div class="stat"><span class="stat-lbl">Velocidad</span><span id="speed-val" class="stat-val">2</span></div>
 </div>
 
-<div id="line-marker"></div>
+<div id="container">
+    <div class="block journalist active">
+        <span class="role">PERIODISTA (3 MIN)</span>
+        <div class="txt">Bienvenido. ¿Por qué empezar con una pregunta que cuestiona todo el sistema actual?</div>
+    </div>
 
-<div id="scroller">
-    <div id="content">
-        
-        <div class="block journo" data-duration="180">
-            <span class="role">Periodista (3 min)</span>
-            <div class="txt">Bienvenido. Presentamos el volumen 1 de la tetralogía "Poderes para Aprender". ¿Por qué empezar con una curva aristotélica y una pregunta al aire?</div>
-        </div>
+    <div class="block author">
+        <span class="role">AUTOR</span>
+        <div class="txt">¿Cómo es posible que con más tecnología seamos menos eficientes? Seneca decía: "La suerte es la unión de preparación y oportunidad". Estos poderes son tu preparación.</div>
+    </div>
 
-        <div class="block author" data-duration="180">
-            <span class="role">Autor</span>
-            <div class="txt">Lanzo esta pregunta: ¿Por qué antes con 40 alumnos éramos eficientes y hoy con 25 estamos desbordados? <br><br> Seneca decía: <strong>"La suerte es una conjunción entre la preparación y la oportunidad"</strong>. Estos 20 poderes son tu preparación para que las oportunidades no se pierdan en el caos del aula.</div>
-        </div>
+    <div class="block journalist">
+        <span class="role">PERIODISTA (5 MIN)</span>
+        <div class="txt">Háblenos del P.I.C. y de la eficiencia productiva en el aula.</div>
+    </div>
 
-        <div class="block journo" data-duration="300">
-            <span class="role">Periodista (5 min)</span>
-            <div class="txt">En el libro detalla el P.I.C. (Proceso de Impartición de Clases). ¿Cómo pasamos de la simple eficacia a la eficiencia productiva?</div>
-        </div>
+    <div class="block author">
+        <span class="role">AUTOR</span>
+        <div class="txt">El Proceso de Impartición de Clase (P.I.C.) busca ganar tiempo. Con poderes como el "Efecto Saludo", validamos al alumno para que el aprendizaje fluya sin fricción.</div>
+    </div>
 
-        <div class="block author" data-duration="300">
-            <span class="role">Autor</span>
-            <div class="txt">Eficacia es dar la clase; Eficiencia es que aprendan más en menos tiempo. El P.I.C. usa poderes como el "Efecto Saludo" o el "Efecto Periodista" para validar al alumno y ganar su atención desde el segundo uno.</div>
-        </div>
+    <div class="block journalist">
+        <span class="role">PERIODISTA (7 MIN)</span>
+        <div class="txt">Este es el volumen 1 de la tetralogía. ¿Qué sigue?</div>
+    </div>
 
-        <div class="block journo" data-duration="420">
-            <span class="role">Periodista (7 min)</span>
-            <div class="txt">Es la primera parte de una tetralogía. ¿Qué encontrarán los docentes en el resto de la obra sobre la gestión del tiempo?</div>
-        </div>
+    <div class="block author">
+        <span class="role">AUTOR</span>
+        <div class="txt">Es una hoja de ruta total. Buscamos el "Efecto Concierto": que el alumno venga preparado para que la clase sea una sinfonía de alto rendimiento.</div>
+    </div>
 
-        <div class="block author" data-duration="420">
-            <span class="role">Autor</span>
-            <div class="txt">Este volumen sienta las bases. La tetralogía completa es una hoja de ruta para que el docente deje de ser un "dictador de contenidos" y sea un "director de orquesta". Con el <strong>Efecto Concierto</strong>, el alumno viene preparado y la clase fluye.</div>
-        </div>
-
-        <div class="block journo" data-duration="300">
-            <span class="role">Periodista (5 min)</span>
-            <div class="txt">Finalmente, hablemos del objetivo social. ¿Cómo ayuda este libro a la sanidad o a nuestros mayores?</div>
-        </div>
-
-        <div class="block author" data-duration="300">
-            <span class="role">Autor</span>
-            <div class="txt">Si el alumno está motivado y no molesta, el sistema ahorra millones de horas perdidas. Ese tiempo es dinero que la sociedad puede reinvertir en lo que importa: <strong>mejorar la sanidad y cuidar a nuestros mayores</strong>. <br><br> La eficiencia educativa es el motor del bienestar social.</div>
-        </div>
-
+    <div class="block author">
+        <span class="role">REFLEXIÓN FINAL (5 MIN)</span>
+        <div class="txt">Si el alumno no molesta y está motivado, ahorramos recursos. Ese ahorro es dinero para nuestra SANIDAD y para cuidar a nuestros MAYORES. ¡Es un pacto social!</div>
     </div>
 </div>
 
+<div id="controls">
+    <button class="btn" onclick="changeSpeed(-1)">MÁS LENTO</button>
+    <button id="btn-play" class="btn" onclick="startScroll()">PLAY (Espacio)</button>
+    <button id="btn-pause" class="btn" onclick="stopScroll()">PAUSA</button>
+    <button class="btn" onclick="changeSpeed(1)">MÁS RÁPIDO</button>
+</div>
+
 <script>
-    let active = false;
+    let scrolling = false;
     let speed = 2;
-    let timeLeft = 1200;
-    let blockTime = 0;
-    const scroller = document.getElementById('scroller');
+    let time = 1200;
+    const container = document.getElementById('container');
     const blocks = document.querySelectorAll('.block');
 
-    function update() {
-        if(active) {
-            scroller.scrollTop += speed;
-            highlightBlock();
-        }
-        requestAnimationFrame(update);
+    function startScroll() { 
+        scrolling = true; 
+        document.getElementById('btn-play').style.opacity = "0.5";
+        document.getElementById('btn-pause').style.opacity = "1";
+    }
+    
+    function stopScroll() { 
+        scrolling = false; 
+        document.getElementById('btn-play').style.opacity = "1";
+        document.getElementById('btn-pause').style.opacity = "0.5";
     }
 
-    function highlightBlock() {
+    function changeSpeed(delta) {
+        speed = Math.max(1, speed + delta);
+        document.getElementById('speed-val').innerText = speed;
+    }
+
+    // Bucle de movimiento
+    setInterval(() => {
+        if(scrolling) {
+            container.scrollTop += speed;
+            updateHighlight();
+        }
+    }, 30);
+
+    // Resaltar bloque según posición
+    function updateHighlight() {
         let center = window.innerHeight / 2;
         blocks.forEach(b => {
             let rect = b.getBoundingClientRect();
             if(rect.top < center && rect.bottom > center) {
-                if(!b.classList.contains('active')) {
-                    blocks.forEach(x => x.classList.remove('active'));
-                    b.classList.add('active');
-                    blockTime = parseInt(b.getAttribute('data-duration'));
-                }
+                blocks.forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
             }
         });
     }
 
+    // Timer
     setInterval(() => {
-        if(active && timeLeft > 0) {
-            timeLeft--;
-            let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
-            let s = (timeLeft%60).toString().padStart(2,'0');
-            document.getElementById('clock').innerText = `${m}:${s}`;
-            
-            if(blockTime > 0) {
-                blockTime--;
-                let bm = Math.floor(blockTime/60).toString().padStart(2,'0');
-                let bs = (blockTime%60).toString().padStart(2,'0');
-                document.getElementById('block-timer').innerText = `${bm}:${bs}`;
-            }
+        if(scrolling && time > 0) {
+            time--;
+            let m = Math.floor(time/60).toString().padStart(2,'0');
+            let s = (time%60).toString().padStart(2,'0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
         }
     }, 1000);
 
-    window.onkeydown = (e) => {
-        if(e.code === 'Space') {
-            active = !active;
-            document.getElementById('status').innerText = active ? 'RUNNING' : 'STOP';
-            document.getElementById('status').style.color = active ? '#00FF41' : 'red';
-            e.preventDefault();
-        }
-        if(e.code === 'ArrowUp') { speed++; updateUI(); }
-        if(e.code === 'ArrowDown') { speed = Math.max(1, speed-1); updateUI(); }
-    };
-
-    function updateUI() { document.getElementById('speed-display').innerText = 'x' + speed; }
-
-    update();
+    // Controles teclado
+    window.addEventListener('keydown', (e) => {
+        if(e.code === 'Space') { scrolling ? stopScroll() : startScroll(); e.preventDefault(); }
+        if(e.code === 'ArrowUp') changeSpeed(1);
+        if(e.code === 'ArrowDown') changeSpeed(-1);
+    });
 </script>
 
 </body>
