@@ -2,209 +2,451 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TELEPROMPTER: PODERES PARA APRENDER (FINAL)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIBRO PODERES PARA APRENDER - MODO TELEPROMPTER</title>
     <style>
-        body { background: #050505; color: #555; font-family: 'Arial', sans-serif; margin: 0; padding: 0; }
-        
-        #header {
-            position: fixed; top: 0; width: 100%; height: 70px;
-            background: #111; display: flex; justify-content: space-around;
-            align-items: center; z-index: 1000; border-bottom: 2px solid #333;
-        }
-        .stat-val { color: #FFF; font-size: 1.6rem; font-family: monospace; font-weight: bold; }
-        .stat-lbl { color: #888; font-size: 0.7rem; text-transform: uppercase; }
-
-        #reading-line {
-            position: fixed; top: 45%; left: 0; width: 100%; height: 3px;
-            background: rgba(0, 255, 65, 0.4); z-index: 500; pointer-events: none;
+        :root {
+            --primary-color: #1a252f;
+            --secondary-color: #d35400;
+            --accent-color: #2980b9;
+            --bg-color: #f2f4f4;
+            --text-color: #2c3e50;
+            --dark-bg: #111;
         }
 
-        #content { padding: 180px 10% 800px 10%; }
-        .block { margin-bottom: 150px; transition: 0.4s; }
-        .active { color: white !important; opacity: 1 !important; }
-        
-        .role { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; display: block; text-transform: uppercase; letter-spacing: 2px; }
-        .txt { font-size: 3.4rem; font-weight: bold; line-height: 1.3; }
-
-        .journalist { color: #00D4FF; border-left: 10px solid #00D4FF; padding-left: 25px; }
-        .author { color: #00FF41; border-left: 10px solid #00FF41; padding-left: 25px; }
-
-        #controls {
-            position: fixed; bottom: 0; width: 100%; height: 80px;
-            background: #1a1a1a; display: flex; z-index: 2000;
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
         }
-        button { flex: 1; border: none; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-right: 1px solid #333; }
-        #btn-play { background: #28a745; }
-        #btn-pause { background: #dc3545; }
-        .btn-speed { background: #333; }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 4px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+        .center { text-align: center; }
+
+        .quote-box {
+            background: #fef5e7;
+            border-left: 6px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-link {
+            padding: 12px 25px;
+            cursor: pointer;
+            background: #ecf0f1;
+            border: none;
+            outline: none;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-right: 4px;
+            border-radius: 10px 10px 0 0;
+            color: var(--primary-color);
+        }
+
+        .tab-link.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.4s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* TELEPROMPTER STYLES */
+        #teleprompter-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            color: #fff;
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #tp-header {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary-color);
+            z-index: 1001;
+        }
+
+        .tp-timer {
+            font-family: monospace;
+            font-size: 2em;
+            color: #2ecc71;
+        }
+
+        .tp-controls button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        #tp-scroll-area {
+            width: 85%;
+            margin-top: 50vh;
+            padding-bottom: 80vh;
+            text-align: center;
+            transition: transform 0.1s linear;
+        }
+
+        .tp-item {
+            margin-bottom: 180px;
+            opacity: 0.2;
+            transition: opacity 0.3s, transform 0.3s;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tp-item.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .tp-q {
+            font-size: 1.6em;
+            color: var(--secondary-color);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .tp-a {
+            font-size: 2em;
+            line-height: 1.3;
+            font-weight: 300;
+        }
+
+        #tp-focus-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(211, 84, 0, 0.3);
+            pointer-events: none;
+            box-shadow: 0 0 15px var(--secondary-color);
+        }
+
+        /* Q&A STYLES */
+        .q-container { background: #fff; border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.02); }
+        .q-text { color: var(--secondary-color); font-weight: bold; display: block; margin-bottom: 8px; font-size: 1.05em; }
+        .a-text { color: #444; line-height: 1.5; border-left: 3px solid #ddd; padding-left: 10px; }
+
+        .btn-tp-start {
+            background: #e67e22;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            border: none;
+            display: block;
+            width: 100%;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #d35400;
+            transition: 0.2s;
+        }
+
+        .btn-tp-start:active { transform: translateY(4px); box-shadow: none; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 15px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .btn-amazon { background: #ff9900; color: white; }
+        .btn-web { background: #27ae60; color: white; }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
     </style>
 </head>
 <body>
 
-<div id="header">
-    <div><span class="stat-lbl">Tiempo Restante</span><span id="timer" class="stat-val">10:00</span></div>
-    <div><span class="stat-lbl">Velocidad</span><span id="speed-val" class="stat-val">2</span></div>
-</div>
-
-<div id="reading-line"></div>
-
-<div id="content">
+<div class="container" id="main-container">
+    <h1>LIBRO PODERES PARA APRENDER (P.P.A.)</h1>
+    <h2 class="center">Te dará Suerte</h2>
     
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 1</span>
-        <div class="txt">Gregorio, presenta "Poderes para Aprender", volumen 1 de una tetralogía. ¿Cuál es el objetivo y por qué cuatro partes?</div>
+    <div class="quote-box">
+        Poderes Para Aprender busca la eficiencia en el aprendizaje en esta aula llamada mundo.
+        <br><strong>OBJETIVO:</strong> Personas más preparadas en menos tiempo y con menos recursos.
+        <br><em>"La suerte es lo que sucede cuando la preparación se encuentra con la oportunidad."</em> (Séneca)
     </div>
 
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">El objetivo es buscar la EFICIENCIA en el aprendizaje para estar más preparados para cuando tengamos la OPORTUNIDAD de demostrarlo. He diseñado una tetralogía porque la eficiencia educativa es un sistema completo: este libro es la "Gimnasia" inicial.</div>
+    <div class="tabs">
+        <button class="tab-link active" onclick="openTab(event, 'C1')">Cuestionario Presentación</button>
+        <button class="tab-link" onclick="openTab(event, 'C2')">Cuestionario Estratégico</button>
+        <button class="tab-link" onclick="openTab(event, 'Compra')">🛒 Amazon</button>
+        <button class="tab-link" onclick="openTab(event, 'Web')">🌐 Web Oficial</button>
     </div>
 
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 2</span>
-        <div class="txt">Usted es ingeniero y docente. ¿Cómo influye su visión técnica en esta "Gimnasia para el Cerebro"?</div>
+    <!-- PESTAÑA 1: TELEPROMPTER + LISTA -->
+    <div id="C1" class="tab-content active">
+        <button class="btn-tp-start" onclick="startTeleprompter()">
+            🎬 INICIAR MODO TELEPROMPTER (20 Preguntas)
+        </button>
+        <div id="questions-preview-c1">
+            <!-- Se llena con JS -->
+        </div>
     </div>
 
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Como ingeniero, busco optimizar recursos. En el aula, el recurso más escaso es el TIEMPO. Aplico lógica de eficiencia industrial: máximo rendimiento con el mínimo desgaste mental innecesario.</div>
+    <!-- PESTAÑA 2: CUESTIONARIO ESTRATÉGICO COMPLETO -->
+    <div id="C2" class="tab-content">
+        <div id="questions-preview-c2">
+            <!-- Se llena con JS -->
+        </div>
     </div>
 
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 3</span>
-        <div class="txt">Diferencia entre "Eficacia" y "Eficiencia" para un estudiante.</div>
+    <!-- PESTAÑA 3: AMAZON -->
+    <div id="Compra" class="tab-content">
+        <div class="center">
+            <h2>¡PREPÁRATE PARA EL ÉXITO!</h2>
+            <p>La suerte está a un clic de distancia. Hazte con el libro que transformará tu forma de pensar.</p>
+            <a href="https://www.amazon.es/s?k=poderes+para+aprender+gregorio+gomez+perez" target="_blank" class="btn btn-amazon">
+                COMPRAR EN AMAZON
+            </a>
+            <p>Disponible en Tapa Blanda y eBook.</p>
+        </div>
     </div>
 
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Eficacia es simplemente aprobar. EFICIENCIA es tener una estructura mental para retener y aplicar con claridad. No queremos alumnos que pierdan horas, sino que produzcan calidad en el tiempo justo.</div>
+    <!-- PESTAÑA 4: WEB OFICIAL -->
+    <div id="Web" class="tab-content">
+        <div class="center">
+            <h2>CONOCE MÁS DEL PROYECTO</h2>
+            <p>Explora el contenido adicional, vídeos y la comunidad detrás de Poderes para Aprender.</p>
+            <a href="https://libropoderesparaaprender-collab.github.io/libropoderesparaaprender1/" target="_blank" class="btn btn-web">
+                ACCEDER A LA WEB OFICIAL
+            </a>
+        </div>
     </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 4</span>
-        <div class="txt">Presenta 6 poderes ahora. ¿Son los cimientos para los 14 restantes?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Exacto. Estos 6 poderes son la base de la inteligencia ágil. Sin esta "gimnasia" inicial, es imposible aplicar la gestión avanzada que vendrá después. Es el entrenamiento para el éxito.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 5</span>
-        <div class="txt">¿Cuál es el poder más urgente de aplicar hoy?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">El EFECTO SALUDO. Neurológicamente es la llave. Si validas el bienestar del alumno al empezar, rompes la resistencia y el cerebro se abre a absorber información.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 6</span>
-        <div class="txt">¿Cómo ayuda el "Efecto Concierto" a la motivación?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Nadie disfruta un concierto sin conocer las canciones. Con preparación previa, la clase es disfrute, no una tediosa toma de apuntes.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 7</span>
-        <div class="txt">¿Por qué dice que estos poderes hacen que los alumnos "no molesten"?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Un alumno que molesta suele estar frustrado por la ineficiencia. Si siente que su cerebro es productivo, cambia la interrupción por la participación activa.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 8</span>
-        <div class="txt">¿Cómo puede este libro hacernos "tener más suerte"?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Séneca decía: "La suerte es lo que sucede cuando la PREPARACIÓN encuentra la OPORTUNIDAD". Estos 6 poderes son tu preparación. Si estás entrenado, fabricas tu propia suerte.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 9</span>
-        <div class="txt">¿Entonces el objetivo es estar listos para el éxito futuro?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Exacto. Buscamos EFICIENCIA para estar más preparados para cuando llegue la oportunidad de demostrarlo. Que el momento no te pille oxidado, sino en tu mejor forma mental.</div>
-    </div>
-
-    <div class="block journalist">
-        <span class="role">Periodista - Pregunta 10</span>
-        <div class="txt">¿Cómo nos beneficia a todos este pacto social de eficiencia?</div>
-    </div>
-
-    <div class="block author">
-        <span class="role">Autor - Respuesta</span>
-        <div class="txt">Si el sistema es eficiente y los alumnos producen, ahorramos recursos inmensos. Ese dinero es el que permitirá mejorar la SANIDAD y cuidar mejor a nuestros MAYORES. Es un beneficio para toda la sociedad.</div>
-    </div>
-
 </div>
 
-<div id="controls">
-    <button class="btn-speed" onclick="changeSpeed(-1)">LENTO</button>
-    <button id="btn-play" onclick="scrolling = true">PLAY (Espacio)</button>
-    <button id="btn-pause" onclick="scrolling = false">PAUSA</button>
-    <button class="btn-speed" onclick="changeSpeed(1)">RÁPIDO</button>
+<!-- CAPA TELEPROMPTER -->
+<div id="teleprompter-view">
+    <div id="tp-header">
+        <div class="tp-controls">
+            <button onclick="exitTeleprompter()">✖ Salir</button>
+            <button id="btn-pause" onclick="togglePause()">⏸ Pausa</button>
+        </div>
+        <div class="tp-timer" id="global-timer">00:00</div>
+        <div class="tp-controls">
+            <span style="font-size: 0.8em;">Velocidad:</span>
+            <input type="range" id="speed-control" min="1" max="20" value="5">
+        </div>
+    </div>
+    <div id="tp-focus-line"></div>
+    <div id="tp-scroll-area"></div>
 </div>
 
 <script>
-    let scrolling = false;
-    let speed = 2;
-    let timeLeft = 600;
+    // DATOS PESTAÑA 1
+    const qaDataC1 = [
+        { q: "1. ¿Por qué la educación actual necesita 'poderes'?", a: "Porque el sistema actual busca cantidad, pero el libro propone eficiencia: hacer más con menos esfuerzo real." },
+        { q: "2. ¿Qué significa 'Gimnasia para tu Cerebro'?", a: "Que aprender no es pasivo; es un entrenamiento físico de las neuronas para fortalecer la estructura del pensamiento." },
+        { q: "3. ¿Cómo influye la IA en este método?", a: "La IA acelera las capacidades que te proporciona el aprendizaje eficiente de estos poderes; sin un cerebro entrenado, la IA es un motor sin conductor." },
+        { q: "4. ¿Qué es el 'Efecto Desayuno'?", a: "Es la base biológica: preparar el cuerpo químicamente para que la mente pueda rendir al máximo." },
+        { q: "5. ¿Es posible estudiar menos y aprender más?", a: "Sí, mediante la eficiencia mental. El libro enseña a eliminar el tiempo muerto y concentrar el poder cognitivo." },
+        { q: "6. ¿Qué es el 'Efecto Concierto'?", a: "Llegar preparado. Disfrutas el aprendizaje porque ya conoces la melodía básica del tema." },
+        { q: "7. ¿Qué es el 'Efecto Cine'?", a: "El respeto absoluto al orador. Un entorno de silencio y atención que maximiza la absorción de datos." },
+        { q: "8. ¿Qué es el 'Efecto Periodista'?", a: "La actitud inquisitiva: ir a clase a buscar la noticia, no a que te la cuenten." },
+        { q: "9. ¿Qué es el 'Efecto Tiempo'?", a: "La gestión consciente de los minutos para que el tiempo trabaje para ti y no contra ti." },
+        { q: "10. ¿Qué es el 'Efecto Tonto'?", a: "Estar sin estar. Es la pérdida irracional de tiempo que este libro elimina radicalmente." },
+        { q: "11. ¿Por qué una tetralogía?", a: "Porque el cambio educativo requiere 4 fases: Alumno, Centro, Profesor y Sociedad. Este es el inicio." },
+        { q: "12. ¿Es un libro solo para estudiantes?", a: "No, es para 'aprendedores' permanentes: opositores, trabajadores y mentes curiosas." },
+        { q: "13. ¿Qué papel juega la disciplina?", a: "Es el pegamento. Sin disciplina no hay gimnasia mental, pero con estos poderes, la disciplina es natural." },
+        { q: "14. ¿Cómo mejora la convivencia este libro?", a: "A través del respeto mutuo y la atención consciente (Efecto Cine)." },
+        { q: "15. ¿Por qué es importante el ejercicio físico para aprender?", a: "Porque un cuerpo ágil genera una mente ágil; la gimnasia mental requiere un soporte físico sano." },
+        { q: "16. ¿Qué significa 'desnudarse intelectualmente'?", a: "Quitarse los prejuicios y el miedo al error para poder entrenar desde la base." },
+        { q: "17. ¿Cómo ayuda este libro a la memoria?", a: "No memorizando más, sino comprendiendo mejor las estructuras previas." },
+        { q: "18. ¿Qué diferencia hay entre eficacia y eficiencia?", a: "Eficacia es lograr el aprobado. Eficiencia es lograrlo con el menor desgaste y mayor poso real." },
+        { q: "19. ¿Por qué leer a Gregorio Gómez Pérez?", a: "Por su visión híbrida entre ingeniero y profesor que aporta una lógica matemática al aprendizaje." },
+        { q: "20. ¿Qué encontraremos en los próximos libros?", a: "La expansión de estos poderes hacia la gestión de centros y la formación docente." }
+    ];
 
-    function changeSpeed(delta) {
-        speed = Math.max(1, speed + delta);
-        document.getElementById('speed-val').innerText = speed;
-    }
+    // DATOS PESTAÑA 2
+    const qaDataC2 = [
+        { q: "1. Séneca decía que la suerte es preparación + oportunidad. ¿Cómo cumple esto el libro?", a: "El libro es tu plan de preparación total. Al terminarlo, estarás listo para que cualquier oportunidad se convierta en éxito. ¡Tendrás suerte!" },
+        { q: "2. ¿Por qué dices que con este libro 'tendrás suerte'?", a: "Porque dejarás de depender del azar. Tu cerebro estará tan entrenado que verás oportunidades donde otros solo ven problemas." },
+        { q: "3. ¿Cómo acelera la IA las capacidades de quien lee este libro?", a: "La IA potencia exponencialmente las habilidades de pensamiento crítico y estructuración que los poderes te otorgan." },
+        { q: "4. ¿Es el aprendizaje eficiente un 'superpoder'?", a: "En el mundo actual, sí. Quien aprende más rápido y mejor, domina su entorno." },
+        { q: "5. ¿Por qué comprarlo en Amazon hoy mismo?", a: "Porque la oportunidad es hoy. Amazon te lo entrega mañana y tu preparación empieza de inmediato." },
+        { q: "6. ¿Cómo influye el 'Efecto Concierto' en la suerte profesional?", a: "Ir a una entrevista o reunión preparado te da esa 'suerte' de dar la respuesta perfecta en el momento justo." },
+        { q: "7. ¿Qué relación hay entre el esfuerzo y la suerte?", a: "El esfuerzo inteligente en el 'gimnasio mental' atrae magnéticamente las oportunidades." },
+        { q: "8. ¿Es caro invertir en este libro?", a: "Es la inversión más barata de tu vida. Unos pocos euros en Amazon para una vida de eficiencia mental." },
+        { q: "9. ¿Por qué el 'Efecto Periodista' te hace una persona con suerte?", a: "Porque estarás donde sucede la noticia. Sabrás qué preguntar para obtener lo que quieres." },
+        { q: "10. ¿Cómo combate el libro el fracaso escolar?", a: "Dando herramientas de poder al alumno para que deje de ser una víctima del sistema y tome el control." },
+        { q: "11. ¿Qué es la 'Zona de Desarrollo Próximo' en este contexto?", a: "Es el espacio donde el libro actúa para elevar tu nivel actual al nivel de excelencia." },
+        { q: "12. ¿Por qué es una 'Gimnasia del Pensamiento Moderno'?", a: "Porque las reglas han cambiado. Ya no vale con saber, hay que saber aprender y adaptarse rápido." },
+        { q: "13. ¿Qué le dirías a quien no cree en la suerte?", a: "Que tiene razón. Solo existe la preparación. Este libro es esa preparación." },
+        { q: "14. ¿Cómo afecta el 'Efecto Cine' al trabajo en equipo?", a: "Crea una sinergia donde la escucha activa multiplica los resultados del grupo." },
+        { q: "15. ¿Por qué el autor enfatiza el 'Efecto Desayuno'?", a: "Porque sin energía biológica no hay potencia mental. La suerte requiere estar despierto." },
+        { q: "16. ¿Qué ganará la sociedad con estos poderes?", a: "Ciudadanos más críticos, eficientes y preparados para resolver problemas complejos." },
+        { q: "17. ¿Es fácil de leer?", a: "Está diseñado para ser directo, práctico y motivador. Sin rodeos innecesarios." },
+        { q: "18. ¿Cómo ayuda la ingeniería al aprendizaje?", a: "Aporta estructura, procesos y optimización de recursos." },
+        { q: "19. ¿Cuál es el mensaje para los padres?", a: "Que den a sus hijos la mejor herramienta posible: el poder de aprender por sí mismos." },
+        { q: "20. ¿Dónde empiezo?", a: "Entra en Amazon, busca 'Poderes para Aprender' y prepárate para tener suerte." }
+    ];
 
-    function loop() {
-        if(scrolling) {
-            window.scrollBy(0, speed);
-            updateHighlight();
-        }
-        requestAnimationFrame(loop);
-    }
+    let scrollPos = 0;
+    let isPaused = false;
+    let timerInterval;
+    let seconds = 0;
+    let animationFrame;
 
-    function updateHighlight() {
-        const blocks = document.querySelectorAll('.block');
-        const center = window.innerHeight * 0.45;
-        blocks.forEach(b => {
-            const rect = b.getBoundingClientRect();
-            if(rect.top < center && rect.bottom > center) {
-                b.classList.add('active');
-            } else {
-                b.classList.remove('active');
-            }
+    // Inicialización de contenidos
+    window.onload = () => {
+        const previewC1 = document.getElementById('questions-preview-c1');
+        qaDataC1.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'q-container';
+            div.innerHTML = `<span class="q-text">${item.q}</span><div class="a-text">${item.a}</div>`;
+            previewC1.appendChild(div);
         });
+
+        const previewC2 = document.getElementById('questions-preview-c2');
+        qaDataC2.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'q-container';
+            div.innerHTML = `<span class="q-text">${item.q}</span><div class="a-text">${item.a}</div>`;
+            previewC2.appendChild(div);
+        });
+    };
+
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
     }
 
-    setInterval(() => {
-        if(scrolling && timeLeft > 0) {
-            timeLeft--;
-            let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
-            let s = (timeLeft%60).toString().padStart(2,'0');
-            document.getElementById('timer').innerText = `${m}:${s}`;
-        }
-    }, 1000);
+    function startTeleprompter() {
+        const scrollArea = document.getElementById('tp-scroll-area');
+        scrollArea.innerHTML = '';
+        qaDataC1.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'tp-item';
+            div.id = `tp-item-${index}`;
+            div.innerHTML = `<span class="tp-q">${item.q}</span><div class="tp-a">${item.a}</div>`;
+            scrollArea.appendChild(div);
+        });
+        document.getElementById('teleprompter-view').style.display = 'flex';
+        scrollPos = 0;
+        seconds = 0;
+        isPaused = false;
+        startTimer();
+        animateTeleprompter();
+    }
 
-    loop();
+    function animateTeleprompter() {
+        if (!isPaused) {
+            let speed = document.getElementById('speed-control').value;
+            scrollPos += parseFloat(speed) / 10;
+            const scrollArea = document.getElementById('tp-scroll-area');
+            scrollArea.style.transform = `translateY(-${scrollPos}px)`;
+
+            const items = document.getElementsByClassName('tp-item');
+            const focusY = window.innerHeight * 0.5;
+            for (let item of items) {
+                const rect = item.getBoundingClientRect();
+                if (rect.top < focusY && rect.bottom > focusY) item.classList.add('active');
+                else item.classList.remove('active');
+            }
+        }
+        animationFrame = requestAnimationFrame(animateTeleprompter);
+    }
+
+    function togglePause() {
+        isPaused = !isPaused;
+        document.getElementById('btn-pause').innerText = isPaused ? '▶ Reanudar' : '⏸ Pausa';
+    }
+
+    function startTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('global-timer').innerText = `${mins}:${secs}`;
+            }
+        }, 1000);
+    }
+
+    function exitTeleprompter() {
+        cancelAnimationFrame(animationFrame);
+        clearInterval(timerInterval);
+        document.getElementById('teleprompter-view').style.display = 'none';
+    }
 
     window.addEventListener('keydown', (e) => {
-        if(e.code === 'Space') { scrolling = !scrolling; e.preventDefault(); }
-        if(e.code === 'ArrowUp') changeSpeed(1);
-        if(e.code === 'ArrowDown') changeSpeed(-1);
+        if (e.code === 'Space' && document.getElementById('teleprompter-view').style.display === 'flex') {
+            e.preventDefault();
+            togglePause();
+        }
     });
 </script>
 
